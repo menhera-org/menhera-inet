@@ -1,0 +1,19 @@
+[package]
+name = "menhera-inet"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0 OR MPL-2.0"
+readme = "README.md"
+repository = "https://github.com/menhera-org/menhera-inet"
+description = "Utilities for working with IP addresses and networks"
+homepage = "https://github.com/menhera-org/menhera-inet"
+
+[dependencies]
+hickory-proto = "0.24"
+ipnet = "2.10.1"
+regex = "1.11"
+tokio = { version = "1", optional = true }
+
+[features]
+default = ["tokio"]
+tokio = ["dep:tokio"]
