@@ -10,6 +10,7 @@ use std::net::ToSocketAddrs;
 use std::sync::Arc;
 
 static RE_DNS_LABEL: OnceLock<Regex> = OnceLock::new();
+static RE_DIGITS_ONLY: OnceLock<Regex> = OnceLock::new();
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DnsError {
@@ -30,12 +31,18 @@ impl std::error::Error for DnsError {}
 
 fn get_dns_label_re() -> &'static Regex {
     RE_DNS_LABEL.get_or_init(|| {
-        Regex::new(r"^(?!-)[a-zA-Z0-9-]{1,63}(?<!-)$").unwrap()
+        Regex::new(r"(?i)^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$").unwrap()
+    })
+}
+
+fn get_digits_only_re() -> &'static Regex {
+    RE_DIGITS_ONLY.get_or_init(|| {
+        Regex::new(r"^\d+$").unwrap()
     })
 }
 
 fn is_valid_dns_host_label(label: &str) -> bool {
-    get_dns_label_re().is_match(label)
+    get_dns_label_re().is_match(label) && !get_digits_only_re().is_match(label)
 }
 
 fn is_valid_dns_host(host: &str) -> bool {
